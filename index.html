@@ -1,0 +1,178 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Dank Memerooski</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+    <style>
+      #overlay
+      {
+      	position:absolute;
+      	top:0%;
+      	left:0%;
+      	width:100%;
+      	height:100%;
+      }
+      #float {
+        position: relative;
+        -webkit-animation: float 8s 0s infinite alternate;
+        animation: float 8s 0s infinite alternate;
+    }
+      #float2 {
+        position: relative;
+        -webkit-animation: float 4s 1s infinite alternate;
+        animation: float 4s 1s infinite alternate;
+    }
+      #float3 {
+        position: relative;
+        -webkit-animation: float 12s 0s infinite alternate;
+        animation: float 12s 0s infinite alternate;
+    }
+
+    @-webkit-keyframes float {
+      0%   {left:90px; top:0px;}
+      25%  {left:600px; top:500px;}
+      50%  {left:20%; top:10px;}
+      75%  {left:-900px; top:100px;}
+      100% {left:100%; top:500px;}
+    }
+
+    @keyframes float {
+        0%   {left:90px; top:0px;}
+        25%  {left:600px; top:500px;}
+        50%  {left:20%; top:10px;}
+        75%  {left:-900px; top:100px;}
+        100% {left:100%; top:500px;}
+      }
+      </style>
+	</head>
+	<body style="overflow: hidden">
+    <canvas id="world" style="position: fixed; z-index: 999; width: 100%; height: 100%; right: 0%"></canvas>
+		<div style="position: fixed; z-index: -99; width: 100%; height: 100%; right: 0%">
+      <iframe class="animated infinite pulse" width="100%" height="100%" src="https://www.youtube.com/embed/videoseries?list=PLeHhORUZ9guwCYei9JpYKzkQhJPdUHfJC&autoplay=1&controls=0&loop=1&rel=0&showinfo=0&autohide=1&wmode=transparent&hd=1" frameborder="0" allowfullscreen></iframe>
+    </div>
+    <div id="overlay"></div>
+    <center style="position: absolute; left: 40%"><img id="float" src="https://s-media-cache-ak0.pinimg.com/originals/a4/65/e4/a465e414c745bc7ce6e2f953369e3bca.gif" height="402" width="402"></center>
+    <center style="position: absolute; left: 60%"><img id="float2" src="https://ih0.redbubble.net/image.175911084.4459/sticker,375x360.u1.png" height="402" width="402"></center>
+    <center style="position: absolute; left: 20%"><img id="float3" src="http://vignette1.wikia.nocookie.net/steven-universe/images/9/9a/Dat_boi.gif/revision/latest?cb=20160716123916" height="402" width="402"></center>
+    <script>
+    (function() {
+      var COLORS, Confetti, NUM_CONFETTI, PI_2, canvas, confetti, context, drawCircle, i, range, resizeWindow, xpos;
+
+      NUM_CONFETTI = 550;
+
+      COLORS = [[55, 204, 2], [36, 124, 22], [31, 117, 29], [214, 235, 50], [248, 182, 70]];
+
+      PI_2 = 2 * Math.PI;
+
+      canvas = document.getElementById("world");
+
+      context = canvas.getContext("2d");
+
+      window.w = 0;
+
+      window.h = 0;
+
+      resizeWindow = function() {
+        window.w = canvas.width = window.innerWidth;
+        return window.h = canvas.height = window.innerHeight;
+      };
+
+      window.addEventListener('resize', resizeWindow, false);
+
+      window.onload = function() {
+        return setTimeout(resizeWindow, 0);
+      };
+
+      range = function(a, b) {
+        return (b - a) * Math.random() + a;
+      };
+
+      drawCircle = function(x, y, r, style) {
+        context.beginPath();
+        context.arc(x, y, r, 0, PI_2, false);
+        context.fillStyle = style;
+        return context.fill();
+      };
+
+      xpos = 0.5;
+
+      document.onmousemove = function(e) {
+        return xpos = e.pageX / w;
+      };
+
+      window.requestAnimationFrame = (function() {
+        return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function(callback) {
+          return window.setTimeout(callback, 1000 / 60);
+        };
+      })();
+
+      Confetti = (function() {
+        function Confetti() {
+          this.style = COLORS[~~range(0, 5)];
+          this.rgb = "rgba(" + this.style[0] + "," + this.style[1] + "," + this.style[2];
+          this.r = ~~range(2, 6);
+          this.r2 = 2 * this.r;
+          this.replace();
+        }
+
+        Confetti.prototype.replace = function() {
+          this.opacity = 0;
+          this.dop = 0.03 * range(1, 4);
+          this.x = range(-this.r2, w - this.r2);
+          this.y = range(-20, h - this.r2);
+          this.xmax = w - this.r;
+          this.ymax = h - this.r;
+          this.vx = range(0, 2) + 8 * xpos - 5;
+          return this.vy = 0.7 * this.r + range(-1, 1);
+        };
+
+        Confetti.prototype.draw = function() {
+          var ref;
+          this.x += this.vx;
+          this.y += this.vy;
+          this.opacity += this.dop;
+          if (this.opacity > 1) {
+            this.opacity = 1;
+            this.dop *= -1;
+          }
+          if (this.opacity < 0 || this.y > this.ymax) {
+            this.replace();
+          }
+          if (!((0 < (ref = this.x) && ref < this.xmax))) {
+            this.x = (this.x + this.xmax) % this.xmax;
+          }
+          return drawCircle(~~this.x, ~~this.y, this.r, this.rgb + "," + this.opacity + ")");
+        };
+
+        return Confetti;
+
+      })();
+
+      confetti = (function() {
+        var j, ref, results;
+        results = [];
+        for (i = j = 1, ref = NUM_CONFETTI; 1 <= ref ? j <= ref : j >= ref; i = 1 <= ref ? ++j : --j) {
+          results.push(new Confetti);
+        }
+        return results;
+      })();
+
+      window.step = function() {
+        var c, j, len, results;
+        requestAnimationFrame(step);
+        context.clearRect(0, 0, w, h);
+        results = [];
+        for (j = 0, len = confetti.length; j < len; j++) {
+          c = confetti[j];
+          results.push(c.draw());
+        }
+        return results;
+      };
+
+      step();
+
+    }).call(this);
+
+    </script>
+	</body>
+</html>
